@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -8,13 +7,12 @@ using System.Text;
 using System.Windows;
 using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 using WinForms = System.Windows.Forms;
-using System.Collections.ObjectModel;
 
 namespace ProjectStructureExporter
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        // Plik historii – w LocalAppData (bez problemów z uprawnieniami)
+        // History file – stored in LocalAppData (avoids permission issues)
         private static readonly string AppDataDir =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                          "ProjectStructureExporter");
@@ -24,17 +22,11 @@ namespace ProjectStructureExporter
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Collection bound to the ListBox to enable virtualization
-        private readonly ObservableCollection<string> _outputLines = new ObservableCollection<string>();
-
         public MainWindow()
         {
             InitializeComponent();
             Directory.CreateDirectory(AppDataDir);
             LoadPathHistory();
-
-            // Bind the ListBox to the collection
-            OutputBox.ItemsSource = _outputLines;
         }
 
         private void SelectFolder_Click(object sender, RoutedEventArgs e)
@@ -52,31 +44,24 @@ namespace ProjectStructureExporter
             string path = (PathHistoryCombo.Text ?? string.Empty).Trim();
             if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
             {
-                System.Windows.MessageBox.Show("Wybierz poprawny katalog projektu.");
+                System.Windows.MessageBox.Show("Please select a valid project directory.");
                 return;
             }
 
             try
             {
-                StatusLabel.Text = "📂 Skanowanie...";
-                _outputLines.Clear();
+                StatusLabel.Text = "📂 Scanning...";
+                OutputTextBox.Clear();
 
                 var result = await ProjectScanner.ScanAsync(path);
-
-                // Split result into lines and add to the observable collection
-                using (var reader = new StringReader(result))
-                {
-                    string? line;
-                    while ((line = reader.ReadLine()) != null)
-                        _outputLines.Add(line);
-                }
+                OutputTextBox.Text = result;
 
                 AddPathToHistory(path);
-                StatusLabel.Text = $"✅ Zakończono skanowanie: {path}";
+                StatusLabel.Text = $"✅ Scan finished: {path}";
             }
             catch (Exception ex)
             {
-                StatusLabel.Text = "❌ Błąd: " + ex.Message;
+                StatusLabel.Text = "❌ Error: " + ex.Message;
             }
         }
 
@@ -85,27 +70,24 @@ namespace ProjectStructureExporter
             string path = (PathHistoryCombo.Text ?? string.Empty).Trim();
             if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
             {
-                System.Windows.MessageBox.Show("Wybierz poprawny katalog projektu.");
+                System.Windows.MessageBox.Show("Please select a valid project directory.");
                 return;
             }
 
             try
             {
-                StatusLabel.Text = "📂 Skanowanie (bez ciał metod)...";
-                _outputLines.Clear();
+                StatusLabel.Text = "📂 Scanning (signatures only)...";
+                OutputTextBox.Clear();
+
                 var result = await ProjectScanner.ScanWithoutBodiesAsync(path);
-                using (var reader = new StringReader(result))
-                {
-                    string? line;
-                    while ((line = reader.ReadLine()) != null)
-                        _outputLines.Add(line);
-                }
+                OutputTextBox.Text = result;
+
                 AddPathToHistory(path);
-                StatusLabel.Text = $"✅ Zakończono skanowanie (bez ciał): {path}";
+                StatusLabel.Text = $"✅ Scan finished (signatures only): {path}";
             }
             catch (Exception ex)
             {
-                StatusLabel.Text = "❌ Błąd: " + ex.Message;
+                StatusLabel.Text = "❌ Error: " + ex.Message;
             }
         }
 
@@ -119,18 +101,18 @@ namespace ProjectStructureExporter
 
             if (dlg.ShowDialog() == true)
             {
-                var text = string.Join(Environment.NewLine, _outputLines);
+                var text = OutputTextBox.Text ?? string.Empty;
                 File.WriteAllText(dlg.FileName, text, Encoding.UTF8);
                 System.Windows.Clipboard.SetText(text);
-                StatusLabel.Text = "💾 Zapisano do: " + dlg.FileName;
+                StatusLabel.Text = "💾 Saved to: " + dlg.FileName;
             }
         }
 
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
-            var text = string.Join(Environment.NewLine, _outputLines);
+            var text = OutputTextBox.Text ?? string.Empty;
             System.Windows.Clipboard.SetText(text);
-            StatusLabel.Text = "📋 Skopiowano do schowka.";
+            StatusLabel.Text = "📋 Copied to clipboard.";
         }
 
         #region History Management
@@ -152,13 +134,13 @@ namespace ProjectStructureExporter
                 foreach (var line in lines)
                     PathHistoryCombo.Items.Add(line);
 
-                // Ustaw ostatnio użyty jako bieżący (pierwsza linia w pliku – najnowsza)
+                // Set the last used as current (first line in file – newest)
                 if (lines.Count > 0)
                     PathHistoryCombo.Text = lines[0];
             }
             catch
             {
-                // historia jest pomocnicza – ignorujemy błędy IO
+                // history is auxiliary – ignore IO errors
             }
         }
 
@@ -166,7 +148,7 @@ namespace ProjectStructureExporter
         {
             if (string.IsNullOrWhiteSpace(path)) return;
 
-            // 1) Aktualizacja listy w UI – najnowsze na górze, bez duplikatów
+            // 1) Update UI list – newest on top, no duplicates
             var existingIndex = IndexOfItem(PathHistoryCombo, path);
             if (existingIndex >= 0)
                 PathHistoryCombo.Items.RemoveAt(existingIndex);
@@ -174,7 +156,7 @@ namespace ProjectStructureExporter
             PathHistoryCombo.Items.Insert(0, path);
             PathHistoryCombo.Text = path;
 
-            // 2) Zapis do pliku (max N pozycji)
+            // 2) Save to file (max N entries)
             try
             {
                 var current = PathHistoryCombo.Items.Cast<object>()
@@ -189,7 +171,7 @@ namespace ProjectStructureExporter
             }
             catch
             {
-                // ignoruj błędy IO
+                // ignore IO errors
             }
         }
 

@@ -8,18 +8,18 @@
         Background="#1e1e1e">
     <DockPanel>
 
-        <!-- Pasek narzędzi u góry -->
+        <!-- Toolbar -->
         <ToolBar DockPanel.Dock="Top" Background="#2d2d2d" Foreground="#f0f0f0">
-            <TextBlock Text="  Projekt: " VerticalAlignment="Center" Margin="4,0,4,0"/>
+            <TextBlock Text=" Project: " VerticalAlignment="Center" Margin="4,0,4,0"/>
 
-            <!-- >>> COMBOBOX historii ścieżek <<< -->
+            <!-- Path history combo -->
             <ComboBox x:Name="PathHistoryCombo"
                       Width="520"
                       IsEditable="True"
                       IsTextSearchEnabled="True"
                       StaysOpenOnEdit="False"
                       MaxDropDownHeight="280"
-                      ToolTip="Wybierz poprzednio skanowany katalog lub wpisz nowy"
+                      ToolTip="Select previously scanned directory or type a new one"
                       VerticalContentAlignment="Center"
                       Margin="0,0,8,0"
                       />
@@ -31,51 +31,47 @@
             <Button Content="Copy" Click="Copy_Click" Padding="10,4" Foreground="#FF92BCFF"/>
         </ToolBar>
 
-        <!-- Główne okno z wynikami -->
+        <!-- Main output area -->
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="28"/>
             </Grid.RowDefinitions>
 
-            <!-- Grid.Row="0" zostaje jak był, przenosimy atrybuty Margins do ListBox -->
-<ListBox x:Name="OutputBox"
-         Grid.Row="0"
-         Margin="6"
-         Background="#1e1e1e"
-         Foreground="#dcdcdc"
-         BorderBrush="#3a3a3a"
-         FontFamily="Consolas"
-         FontSize="14"
-         HorizontalContentAlignment="Left"
-         ScrollViewer.CanContentScroll="True"
-         ScrollViewer.VerticalScrollBarVisibility="Auto"
-         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-         VirtualizingStackPanel.IsVirtualizing="True"
-         VirtualizingStackPanel.VirtualizationMode="Recycling"
-         IsTabStop="False">
-    <ListBox.ItemsPanel>
-        <ItemsPanelTemplate>
-            <VirtualizingStackPanel/>
-        </ItemsPanelTemplate>
-    </ListBox.ItemsPanel>
-    <ListBox.ItemTemplate>
-        <DataTemplate>
-            <TextBlock Text="{Binding}"
-                       FontFamily="Consolas"
-                       FontSize="14"
-                       Foreground="#dcdcdc"
-                       Background="Transparent"
-                       TextWrapping="NoWrap"/>
-        </DataTemplate>
-    </ListBox.ItemTemplate>
-</ListBox>
+            <!-- Editable TextBox with context menu -->
+            <TextBox x:Name="OutputTextBox"
+                     Grid.Row="0"
+                     Margin="6"
+                     Background="#1e1e1e"
+                     Foreground="#dcdcdc"
+                     BorderBrush="#3a3a3a"
+                     FontFamily="Consolas"
+                     FontSize="14"
+                     AcceptsReturn="True"
+                     AcceptsTab="True"
+                     TextWrapping="NoWrap"
+                     HorizontalScrollBarVisibility="Auto"
+                     VerticalScrollBarVisibility="Auto"
+                     SpellCheck.IsEnabled="False">
+                <TextBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Undo" Command="ApplicationCommands.Undo" CommandTarget="{Binding ElementName=OutputTextBox}"/>
+                        <MenuItem Header="Redo" Command="ApplicationCommands.Redo" CommandTarget="{Binding ElementName=OutputTextBox}"/>
+                        <Separator/>
+                        <MenuItem Header="Cut" Command="ApplicationCommands.Cut" CommandTarget="{Binding ElementName=OutputTextBox}"/>
+                        <MenuItem Header="Copy" Command="ApplicationCommands.Copy" CommandTarget="{Binding ElementName=OutputTextBox}"/>
+                        <MenuItem Header="Paste" Command="ApplicationCommands.Paste" CommandTarget="{Binding ElementName=OutputTextBox}"/>
+                        <MenuItem Header="Delete" Command="ApplicationCommands.Delete" CommandTarget="{Binding ElementName=OutputTextBox}"/>
+                        <Separator/>
+                        <MenuItem Header="Select All" Command="ApplicationCommands.SelectAll" CommandTarget="{Binding ElementName=OutputTextBox}"/>
+                    </ContextMenu>
+                </TextBox.ContextMenu>
+            </TextBox>
 
-
-            <!-- Pasek statusu -->
+            <!-- Status bar -->
             <StatusBar Grid.Row="1" Background="#2d2d2d" Foreground="#e6e6e6">
                 <StatusBarItem>
-                    <TextBlock x:Name="StatusLabel" Text="Gotowe."/>
+                    <TextBlock x:Name="StatusLabel" Text="Ready."/>
                 </StatusBarItem>
             </StatusBar>
         </Grid>

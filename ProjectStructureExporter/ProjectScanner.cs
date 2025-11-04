@@ -19,7 +19,7 @@ namespace ProjectStructureExporter
             ".vs", "node_modules", ".idea"
         };
 
-        // Wzorce plików generowanych (pomijamy)
+        // Patterns of generated files (skip)
         private static readonly string[] GeneratedSuffixes = { ".g.cs", ".g.i.cs", ".designer.cs" };
 
         public static Task<string> ScanAsync(string rootPath)
@@ -35,22 +35,22 @@ namespace ProjectStructureExporter
         private static string Scan(string rootPath, bool stripBodies = false)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"📦 Projekt: {rootPath}");
-            sb.AppendLine($"Data skanowania: {DateTime.Now}");
+            sb.AppendLine($"📦 Project: {rootPath}");
+            sb.AppendLine($"Scan date: {DateTime.Now}");
             sb.AppendLine(new string('═', 80));
-            sb.AppendLine("📁 Struktura katalogów:");
+            sb.AppendLine("📁 Directory structure:");
             sb.AppendLine();
 
             PrintDirectoryTree(sb, rootPath, "");
 
             sb.AppendLine();
             sb.AppendLine(new string('═', 80));
-            sb.AppendLine(stripBodies ? "📜 Zawartość plików (bez ciał metod):" : "📜 Zawartość plików:");
+            sb.AppendLine(stripBodies ? "📜 File contents (signatures only):" : "📜 File contents:");
             sb.AppendLine();
 
             foreach (var file in EnumerateFiles(rootPath))
             {
-                // pomiń pliki generowane
+                // skip generated files
                 if (IsGeneratedFile(file)) continue;
 
                 sb.AppendLine($"───────────────────────────────────────────────");
@@ -72,7 +72,7 @@ namespace ProjectStructureExporter
                 }
                 catch (Exception ex)
                 {
-                    sb.AppendLine($"[Błąd odczytu pliku: {ex.Message}]");
+                    sb.AppendLine($"[File read error: {ex.Message}]");
                 }
                 sb.AppendLine();
             }

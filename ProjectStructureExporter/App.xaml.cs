@@ -10,5 +10,4 @@ namespace ProjectStructureExporter
     public partial class App : System.Windows.Application
     {
     }
-
 }
