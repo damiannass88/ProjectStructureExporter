@@ -2,7 +2,7 @@
 
 A lightweight Windows WPF app that scans a .NET project directory and produces a compact, readable text snapshot designed for use as an AI prompt. It captures the directory tree and file contents, with an option to strip C# method bodies to reduce tokens while keeping useful API signatures (interfaces, classes, records, properties, and method signatures).
 
-<img width="1358" height="866" alt="image" src="https://github.com/user-attachments/assets/6e9515df-2de4-42f7-9bee-e499066e5cd0" />
+<img width="1358" height="866" alt="image" src="https://github.com/user-attachments/assets/dcf24aee-64a3-4da0-a49e-449c7a25ba0e" />
 
 
 ## Why
@@ -85,6 +85,8 @@ A lightweight Windows WPF app that scans a .NET project directory and produces a
 - Interfaces-only mode.
 - Configurable include/exclude patterns per file extension and folder.
 - Optional size limits per file.
+
+<img width="1358" height="866" alt="image" src="https://github.com/user-attachments/assets/6e9515df-2de4-42f7-9bee-e499066e5cd0" />
 
 ## License
 Open source under the MIT License. See `LICENSE` for details.
