@@ -1,0 +1,82 @@
+﻿<Window x:Class="ProjectStructureExporter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Project Structure Exporter"
+        Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Icon="/kolo-emocji.png"
+        Background="#1e1e1e">
+    <DockPanel>
+
+        <!-- Pasek narzędzi u góry -->
+        <ToolBar DockPanel.Dock="Top" Background="#2d2d2d" Foreground="#f0f0f0">
+            <TextBlock Text="  Projekt: " VerticalAlignment="Center" Margin="4,0,4,0"/>
+
+            <!-- >>> COMBOBOX historii ścieżek <<< -->
+            <ComboBox x:Name="PathHistoryCombo"
+                      Width="520"
+                      IsEditable="True"
+                      IsTextSearchEnabled="True"
+                      StaysOpenOnEdit="False"
+                      MaxDropDownHeight="280"
+                      ToolTip="Wybierz poprzednio skanowany katalog lub wpisz nowy"
+                      VerticalContentAlignment="Center"
+                      Margin="0,0,8,0"
+                      />
+
+            <Button Content="Wybierz Folder" Click="SelectFolder_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#f0f0f0"/>
+            <Button Content="Skanuj" Click="Scan_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
+            <Button Content="Zapisz TXT" Click="Save_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
+            <Button Content="Kopiuj" Click="Copy_Click" Padding="10,4" Foreground="#FF92BCFF"/>
+        </ToolBar>
+
+        <!-- Główne okno z wynikami -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="28"/>
+            </Grid.RowDefinitions>
+
+            <!-- Grid.Row="0" zostaje jak był, przenosimy atrybuty Margins do ListBox -->
+<ListBox x:Name="OutputBox"
+         Grid.Row="0"
+         Margin="6"
+         Background="#1e1e1e"
+         Foreground="#dcdcdc"
+         BorderBrush="#3a3a3a"
+         FontFamily="Consolas"
+         FontSize="14"
+         HorizontalContentAlignment="Left"
+         ScrollViewer.CanContentScroll="True"
+         ScrollViewer.VerticalScrollBarVisibility="Auto"
+         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+         VirtualizingStackPanel.IsVirtualizing="True"
+         VirtualizingStackPanel.VirtualizationMode="Recycling"
+         IsTabStop="False">
+    <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+            <VirtualizingStackPanel/>
+        </ItemsPanelTemplate>
+    </ListBox.ItemsPanel>
+    <ListBox.ItemTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding}"
+                       FontFamily="Consolas"
+                       FontSize="14"
+                       Foreground="#dcdcdc"
+                       Background="Transparent"
+                       TextWrapping="NoWrap"/>
+        </DataTemplate>
+    </ListBox.ItemTemplate>
+</ListBox>
+
+
+            <!-- Pasek statusu -->
+            <StatusBar Grid.Row="1" Background="#2d2d2d" Foreground="#e6e6e6">
+                <StatusBarItem>
+                    <TextBlock x:Name="StatusLabel" Text="Gotowe."/>
+                </StatusBarItem>
+            </StatusBar>
+        </Grid>
+    </DockPanel>
+</Window>
