@@ -24,10 +24,11 @@
                       Margin="0,0,8,0"
                       />
 
-            <Button Content="Wybierz Folder" Click="SelectFolder_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#f0f0f0"/>
-            <Button Content="Skanuj" Click="Scan_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
-            <Button Content="Zapisz TXT" Click="Save_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
-            <Button Content="Kopiuj" Click="Copy_Click" Padding="10,4" Foreground="#FF92BCFF"/>
+            <Button Content="Choose Folder" Click="SelectFolder_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#f0f0f0"/>
+            <Button Content="Scan" Click="Scan_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
+            <Button Content="Scan NoBodies" Click="ScanNoBodies_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FFB0FFA6"/>
+            <Button Content="Save TXT" Click="Save_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
+            <Button Content="Kopie" Click="Copy_Click" Padding="10,4" Foreground="#FF92BCFF"/>
         </ToolBar>
 
         <!-- Główne okno z wynikami -->

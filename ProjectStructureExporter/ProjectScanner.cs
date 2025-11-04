@@ -27,7 +27,12 @@ namespace ProjectStructureExporter
             return Task.Run(() => Scan(rootPath));
         }
 
-        private static string Scan(string rootPath)
+        public static Task<string> ScanWithoutBodiesAsync(string rootPath)
+        {
+            return Task.Run(() => Scan(rootPath, stripBodies: true));
+        }
+
+        private static string Scan(string rootPath, bool stripBodies = false)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"📦 Projekt: {rootPath}");
@@ -40,7 +45,7 @@ namespace ProjectStructureExporter
 
             sb.AppendLine();
             sb.AppendLine(new string('═', 80));
-            sb.AppendLine("📜 Zawartość plików:");
+            sb.AppendLine(stripBodies ? "📜 Zawartość plików (bez ciał metod):" : "📜 Zawartość plików:");
             sb.AppendLine();
 
             foreach (var file in EnumerateFiles(rootPath))
@@ -53,8 +58,17 @@ namespace ProjectStructureExporter
                 sb.AppendLine("───────────────────────────────────────────────");
                 try
                 {
-                    var content = File.ReadAllText(file, Encoding.UTF8);
-                    sb.AppendLine(content);
+                    if (stripBodies && string.Equals(Path.GetExtension(file), ".cs", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var content = File.ReadAllText(file, Encoding.UTF8);
+                        var stripped = SignatureOnlyRewriter.StripToSignatures(content);
+                        sb.AppendLine(stripped);
+                    }
+                    else
+                    {
+                        var content = File.ReadAllText(file, Encoding.UTF8);
+                        sb.AppendLine(content);
+                    }
                 }
                 catch (Exception ex)
                 {

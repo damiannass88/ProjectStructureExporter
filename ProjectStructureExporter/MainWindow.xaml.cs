@@ -80,6 +80,35 @@ namespace ProjectStructureExporter
             }
         }
 
+        private async void ScanNoBodies_Click(object sender, RoutedEventArgs e)
+        {
+            string path = (PathHistoryCombo.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            {
+                System.Windows.MessageBox.Show("Wybierz poprawny katalog projektu.");
+                return;
+            }
+
+            try
+            {
+                StatusLabel.Text = "📂 Skanowanie (bez ciał metod)...";
+                _outputLines.Clear();
+                var result = await ProjectScanner.ScanWithoutBodiesAsync(path);
+                using (var reader = new StringReader(result))
+                {
+                    string? line;
+                    while ((line = reader.ReadLine()) != null)
+                        _outputLines.Add(line);
+                }
+                AddPathToHistory(path);
+                StatusLabel.Text = $"✅ Zakończono skanowanie (bez ciał): {path}";
+            }
+            catch (Exception ex)
+            {
+                StatusLabel.Text = "❌ Błąd: " + ex.Message;
+            }
+        }
+
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new SaveFileDialog
