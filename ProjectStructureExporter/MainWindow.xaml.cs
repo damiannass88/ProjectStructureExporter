@@ -91,6 +91,43 @@ namespace ProjectStructureExporter
             }
         }
 
+        private async void ScanMini_Click(object sender, RoutedEventArgs e)
+        {
+            string path = (PathHistoryCombo.Text ?? string.Empty).Trim();
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            {
+                System.Windows.MessageBox.Show("Please select a valid project directory.");
+                return;
+            }
+
+            try
+            {
+                StatusLabel.Text = "📂 Scanning (mini)...";
+                OutputTextBox.Clear();
+
+                var result = await MiniProjectScanner.ScanAsync(
+    rootPath: path,
+    options: new MiniProjectScanner.MiniScanOptions
+    {
+        MaxFilesTotal = 160,
+        MaxLinesPerFile = 45,
+        MaxBytesPerFile = 3072,
+        TreeSummaryOnly = true,      // compact tree
+        StripCSharpToSignatures = true,
+        OnlyHighSignalFiles = true,
+        MaxSln = 1, MaxCsproj = 10, MaxCs = 70, MaxJson = 30, MaxRazor = 15, MaxYaml = 8
+    });
+                OutputTextBox.Text = result;
+
+                AddPathToHistory(path);
+                StatusLabel.Text = $"✅ Scan finished (mini): {path}";
+            }
+            catch (Exception ex)
+            {
+                StatusLabel.Text = "❌ Error: " + ex.Message;
+            }
+        }
+
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new SaveFileDialog

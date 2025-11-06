@@ -5,6 +5,9 @@ namespace ProjectStructureExporter
 {
     public static class ProjectScanner
     {
+        private const string Version = "ProjectScanner without method bodies";
+        private const string Version2 = "ProjectScanner standard";
+
         private static readonly string[] AllowedExtensions =
         {
             ".cs", ".json", ".razor", ".csproj", ".sln", ".xml",
@@ -35,6 +38,8 @@ namespace ProjectStructureExporter
         private static string Scan(string rootPath, bool stripBodies = false)
         {
             var sb = new StringBuilder();
+            // — Version banner —
+            sb.AppendLine(stripBodies ? Version : Version2);
             sb.AppendLine($"📦 Project: {rootPath}");
             sb.AppendLine($"Scan date: {DateTime.Now}");
             sb.AppendLine(new string('═', 80));

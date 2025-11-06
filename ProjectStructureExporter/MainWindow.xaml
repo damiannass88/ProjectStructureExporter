@@ -10,7 +10,7 @@
 
         <!-- Toolbar -->
         <ToolBar DockPanel.Dock="Top" Background="#2d2d2d" Foreground="#f0f0f0">
-            <TextBlock Text=" Project: " VerticalAlignment="Center" Margin="4,0,4,0"/>
+            <TextBlock Text=" Project: " VerticalAlignment="Center" Margin="4,0,4,0" Foreground="#FF8C8C8C"/>
 
             <!-- Path history combo -->
             <ComboBox x:Name="PathHistoryCombo"
@@ -25,10 +25,11 @@
                       />
 
             <Button Content="Choose Folder" Click="SelectFolder_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#f0f0f0"/>
-            <Button Content="Scan" Click="Scan_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
+            <Button Content="Scan" Click="Scan_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FFFAFF92"/>
             <Button Content="Scan NoBodies" Click="ScanNoBodies_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FFB0FFA6"/>
+            <Button Content="Scan Mini" Click="ScanMini_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FFFFD48A"/>
             <Button Content="Save TXT" Click="Save_Click" Margin="0,0,8,0" Padding="10,4" Foreground="#FF92BCFF"/>
-            <Button Content="Copy" Click="Copy_Click" Padding="10,4" Foreground="#FF92BCFF"/>
+            <Button Content="CopyAll" Click="Copy_Click" Padding="10,4" Foreground="#FF92BCFF"/>
         </ToolBar>
 
         <!-- Main output area -->

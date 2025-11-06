@@ -4,6 +4,49 @@ A lightweight Windows WPF app that scans a .NET project directory and produces a
 
 <img width="1358" height="866" alt="image" src="https://github.com/user-attachments/assets/6e9515df-2de4-42f7-9bee-e499066e5cd0" />
 
+## New Feature: MiniProjectScanner (v0.4-ultra)
+Ultra-light, high-signal scan mode focused on fast summarization with strict output size control. It complements the existing Full / NoBodies modes.
+
+### What It Does
+- Scores and selects only the most relevant files (solution, project files, configuration, public API surface, key data & service layers).
+- Applies per-type caps (MaxSln, MaxCsproj, MaxCs, MaxJson, MaxRazor, MaxYaml) plus a global MaxFilesTotal.
+- Can produce a collapsed summary directory tree (TreeSummaryOnly) that folds single-child folder chains and shows file counts.
+- Reduces content aggressively:
+ - .sln → only Project(...) lines
+ - .csproj/.xml/.config → TargetFramework, ProjectReference, PackageReference
+ - .json → structural outline (bounded depth + entry count)
+ - .cs → public/internal surface only (namespaces, type headers, methods, properties, events) when StripCSharpToSignatures = true
+ - .razor → directives (@page/@inject/@layout) + first lines
+ - .yml/.yaml → first lines
+- Skips generated files (*.g.cs, *.g.i.cs, *.designer.cs).
+- Truncates large files by bytes and/or lines with clear markers.
+
+### When To Use
+- Need a very small prompt for an AI model (token-budget constrained).
+- Quick repo reconnaissance / code review prep.
+- Comparing structure across commits (future diff feature planned).
+
+### Sample Usage
+```csharp
+var options = new MiniProjectScanner.MiniScanOptions
+{
+ MaxFilesTotal =150,
+ MaxLinesPerFile =60,
+ MaxBytesPerFile =4096,
+ TreeSummaryOnly = true,
+ StripCSharpToSignatures = true,
+ OnlyHighSignalFiles = true
+};
+string report = await MiniProjectScanner.ScanAsync(solutionRoot, options);
+Console.WriteLine(report);
+```
+
+### Key Option Notes
+- OnlyHighSignalFiles = false → broader, less filtered snapshot.
+- TreeSummaryOnly = false → full hierarchical listing instead of collapsed summary.
+- Increase MaxBytesPerFile for large config or JSON.
+
+Current module version: MiniProjectScanner v0.4-ultra.
 
 ## Why
 - Share a project’s structure and code context with an AI without uploading a repository.
@@ -85,6 +128,7 @@ A lightweight Windows WPF app that scans a .NET project directory and produces a
 - Interfaces-only mode.
 - Configurable include/exclude patterns per file extension and folder.
 - Optional size limits per file.
+- Future MiniProjectScanner enhancements: diff between scans, export structured JSON/Markdown, signature-change detection.
 
 ## License
 Open source under the MIT License. See `LICENSE` for details.
